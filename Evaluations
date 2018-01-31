@@ -1,0 +1,119 @@
+#Final Evaluation 
+
+
+> data<-read.csv("E:/Acer Desktop/603/ratings.csv")
+> matrix<- as(data,"realRatingMatrix")
+
+
+#Creating the 6 Models
+> UBmodelZC=Recommender(matrix[1:668],method="UBCF", param=list(normalize = "Z-score",method="Cosine",nn=5,minRating=0.5))
+> UBmodelZP=Recommender(matrix[1:668],method="UBCF", param=list(normalize = "Z-score",method="Pearson",nn=5,minRating=0.5))
+> UBmodelZJ=Recommender(matrix[1:668],method="UBCF", param=list(normalize = "Z-score",method="Jaccard",nn=5,minRating=0.5))
+
+> UBmodelCC=Recommender(matrix[1:668],method="UBCF", param=list(normalize = "center",method="Cosine",nn=5,minRating=0.5))
+> UBmodelCP=Recommender(matrix[1:668],method="UBCF", param=list(normalize = "center",method="Pearson",nn=5,minRating=0.5))
+> UBmodelCJ=Recommender(matrix[1:668],method="UBCF", param=list(normalize = "center",method="Jaccard",nn=5,minRating=0.5))
+
+
+recommenderRegistry$get_entries(dataType = "realRatingMatrix")
+
+#spliting the DataSet 90 and 10
+scheme <- evaluationScheme(matrix, method = "split", train = .9,
+                           k = 1, given = 10, goodRating = 3)
+
+algorithms <- list(
+ 
+  
+   "user-based CF ZC" = list(name="UBCF", param=list(normalize = "Z-score", method="Cosine",nn=5, minRating=0.5)),
+   "user-based CF ZP" = list(name="UBCF", param=list(normalize = "Z-score", method="Pearson",nn=5, minRating=0.5)),
+   "user-based CF ZJ" = list(name="UBCF", param=list(normalize = "Z-score", method="Jaccard",nn=5, minRating=0.5)),
+   "user-based CF CC" = list(name="UBCF", param=list(normalize = "center", method="Cosine",nn=5, minRating=0.5)),
+   "user-based CF CP" = list(name="UBCF", param=list(normalize = "center", method="Pearson",nn=5, minRating=0.5)),
+   "user-based CF CJ" = list(name="UBCF", param=list(normalize = "center", method="Jaccard",nn=5, minRating=0.5))                                             
+  
+  )
+
+
+#Running the 6 Model algorithms
+> results <- evaluate(scheme, algorithms, n=c(1, 3, 5, 10, 15, 20))
+UBCF run fold/sample [model time/prediction time]
+	 1  [0.05sec/4.04sec] 
+UBCF run fold/sample [model time/prediction time]
+	 1  [0.03sec/2.26sec] 
+UBCF run fold/sample [model time/prediction time]
+	 1  [0.03sec/2.78sec] 
+UBCF run fold/sample [model time/prediction time]
+	 1  [0.02sec/3.99sec] 
+UBCF run fold/sample [model time/prediction time]
+	 1  [0sec/2.25sec] 
+UBCF run fold/sample [model time/prediction time]
+	 1  [0.01sec/2.77sec] 
+
+#Drawing the ROC curve
+plot(results, annotate = 1:4, legend="topleft")
+
+#Drawing the precision / Recall
+
+plot(results, "prec/rec", annotate=3)
+
+
+######################################################################################
+r5<- Recommender(getData(scheme, "train"), method="UBCF",param=list(normalize ="Z-score",method = "Pearson",nn=5,minRating=0.5))
+
+
+p5 <- predict(r5, getData(scheme, "known"), type="ratings")
+
+calcPredictionAccuracy(p5, getData(scheme, "unknown"))
+
+head(calcPredictionAccuracy(p5, getData(scheme, "unknown"), byUser=TRUE))
+
+
+#######################################################################################
+r10 <- Recommender(getData(scheme, "train"), method="UBCF",param=list(normalize ="Z-score",method = "Pearson",nn=10,minRating=0.5))
+
+p10 <- predict(r10, getData(scheme, "known"), type="ratings")
+
+calcPredictionAccuracy(p10, getData(scheme, "unknown"))
+
+#######################################################################################
+
+r15 <- Recommender(getData(scheme, "train"), method="UBCF",param=list(normalize ="Z-score",method = "Pearson",nn=15,minRating=0.5))
+
+p15 <- predict(r15, getData(scheme, "known"), type="ratings")
+
+calcPredictionAccuracy(p15, getData(scheme, "unknown"))
+
+#######################################################################################
+
+r20 <- Recommender(getData(scheme, "train"), method="UBCF",param=list(normalize ="Z-score",method = "Pearson",nn=20,minRating=0.5))
+
+p20 <- predict(r20, getData(scheme, "known"), type="ratings")
+
+calcPredictionAccuracy(p20, getData(scheme, "unknown"))
+
+
+#######################################################################################
+
+r25 <- Recommender(getData(scheme, "train"), method="UBCF",param=list(normalize ="Z-score",method = "Pearson",nn=25,minRating=0.5))
+
+p25 <- predict(r25, getData(scheme, "known"), type="ratings")
+
+calcPredictionAccuracy(p25, getData(scheme, "unknown"))
+
+#######################################################################################
+
+
+
+r30 <- Recommender(getData(scheme, "train"), method="UBCF",param=list(normalize ="Z-score",method = "Pearson",nn=30,minRating=0.5))
+
+p30 <- predict(r30, getData(scheme, "known"), type="ratings")
+
+calcPredictionAccuracy(p30, getData(scheme, "unknown"))
+#######################################################################################
+r35 <- Recommender(getData(scheme, "train"), method="UBCF",param=list(normalize ="Z-score",method = "Pearson",nn=35,minRating=0.5))
+
+p35 <- predict(r35, getData(scheme, "known"), type="ratings")
+
+calcPredictionAccuracy(p35, getData(scheme, "unknown"))
+
+#######################################################################################
